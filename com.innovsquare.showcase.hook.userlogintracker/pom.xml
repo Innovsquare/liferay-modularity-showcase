@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.innovsquare.showcase</groupId>
+	<artifactId>com.innovsquare.showcase.hook.userlogintracker</artifactId>
+	<packaging>bundle</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Innovsquare user login tracker service hook bundle</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<build.javac.source>1.7</build.javac.source>
+		<build.javac.target>1.7</build.javac.target>
+		<liferay.version>7.0.0-SNAPSHOT</liferay.version>
+		<liferay.auto.deploy.dir>${liferay.home}/deploy</liferay.auto.deploy.dir>
+	</properties>
+
+	<dependencies>
+
+		<!-- OSGi dependencies -->
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+		<!-- Liferay dependencies -->
+		<dependency>
+			<groupId>com.liferay.portal</groupId>
+			<artifactId>portal-service</artifactId>
+			<version>${liferay.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- Apache maven compiler plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${build.javac.source}</source>
+					<target>${build.javac.target}</target>
+				</configuration>
+			</plugin>
+			<!-- Apache felix OSGi plugin -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package />
+						<!-- define the service hook package as private (internal API) => package 
+							no longer imported from other bundles -->
+						<Private-Package>com.innovsquare.showcase.hook.userservice</Private-Package>
+						<!-- using asterisk for package import is not recommended, the best 
+							practise -->
+						<!--<Import-Package>com.liferay.portal.service;version="7.0.0",*</Import-Package> -->
+						<Import-Package>com.liferay.portal.service;version="7.0.0",
+							com.liferay.portal.kernel.exception;version="[7.0,8)",
+							com.liferay.portal.kernel.log;version="[6.3,7)",
+							com.liferay.portal.model;version="[7.0,8)"</Import-Package>
+
+						<!-- scan for components : all classes that have OSGi components annotation 
+							will be registered to OSGi service registry -->
+						<_dsannotations>*</_dsannotations>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<!-- maven copy plugin: deploy of the generated bundle to Liferay TODO: 
+				must be improved by adding maven goal like liferay:deploy -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${liferay.auto.deploy.dir}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${liferay.auto.deploy.dir}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>liferay</id>
+			<url>http://cdn.repository.liferay.com/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+</project>
