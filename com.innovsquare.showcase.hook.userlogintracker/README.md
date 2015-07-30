@@ -1,4 +1,4 @@
-# User Login tracker service hook
+# User login tracker service hook
 A sample of Liferay service hook using OSGi Declarative Services
 
 
@@ -25,5 +25,5 @@ mvn clean package -Pliferay7.0-M6
 
 3) check the deployment: sign in Liferay then check the logs:
 
-![Check hook deployment](/screenshots/35.png?raw=true "Check hook deployment")
+![Check hook deployment](/com.innovsquare.showcase.hook.userlogintracker/screenshots/35.png?raw=true "Check hook deployment")
 
